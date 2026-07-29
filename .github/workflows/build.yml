@@ -20,8 +20,13 @@ jobs:
       - name: Setup Theos environment
         run: |
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
+          rm -rf $HOME/theos
           git clone --recursive https://github.com/theos/theos.git $HOME/theos
-          git clone --depth=1 https://github.com/theos/sdks.git $HOME/theos/sdks
+          curl -LO https://github.com/theos/sdks/archive/master.zip
+          TMP=$(mktemp -d)
+          unzip master.zip -d $TMP
+          mv $TMP/sdks-master $HOME/theos/sdks
+          rm -r master.zip $TMP
 
       - name: Build Rootless Package
         run: |
