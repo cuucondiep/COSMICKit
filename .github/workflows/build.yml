@@ -17,20 +17,13 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Theos environment
-        run: |
-          echo "THEOS=$HOME/theos" >> $GITHUB_ENV
-          git clone --recursive https://github.com/theos/theos.git $HOME/theos
-          
-          # Tải SDK iOS 16.5 từ repo chuẩn của Theos SDKs
-          curl -LO https://github.com/theos/sdks/releases/download/v16.5/iPhoneOS16.5.sdk.tar.xz
-          mkdir -p $HOME/theos/sdks
-          tar -xf iPhoneOS16.5.sdk.tar.xz -C $HOME/theos/sdks
-          rm iPhoneOS16.5.sdk.tar.xz
+      - name: Setup Theos & SDK
+        uses: theos/setup-theos-action@v1
+        with:
+          sdk: iphoneos
 
       - name: Build Rootless Package
         run: |
-          export THEOS=$HOME/theos
           env CLANG_MODULE_CACHE_PATH=/tmp/clang-module-cache SWIFT_MODULE_CACHE_PATH=/tmp/swift-module-cache make clean package FINALPACKAGE=1
 
       - name: Upload DEB Artifact
