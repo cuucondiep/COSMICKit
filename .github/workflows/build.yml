@@ -22,11 +22,8 @@ jobs:
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
           rm -rf $HOME/theos
           git clone --recursive https://github.com/theos/theos.git $HOME/theos
-          curl -LO https://github.com/theos/sdks/archive/master.zip
-          TMP=$(mktemp -d)
-          unzip master.zip -d $TMP
-          mv $TMP/sdks-master $HOME/theos/sdks
-          rm -r master.zip $TMP
+          # Clone trực tiếp SDKs đầy đủ từ Theos repo
+          git clone --depth=1 https://github.com/theos/sdks.git $HOME/theos/sdks
 
       - name: Build Rootless Package
         run: |
