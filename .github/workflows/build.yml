@@ -17,10 +17,11 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Theos & SDK
-        uses: theos/setup-theos-action@v1
-        with:
-          sdk: iphoneos
+      - name: Setup Theos environment
+        run: |
+          echo "THEOS=$HOME/theos" >> $GITHUB_ENV
+          git clone --recursive https://github.com/theos/theos.git $HOME/theos
+          git clone --depth=1 https://github.com/theos/sdks.git $HOME/theos/sdks
 
       - name: Build Rootless Package
         run: |
