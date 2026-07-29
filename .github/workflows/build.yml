@@ -1,0 +1,38 @@
+name: Build COSMIC Kit DEB
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: # Cho phép nhấn nút bấm Build thủ công bất cứ lúc nào
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Theos environment
+        run: |
+          echo "THEOS=$HOME/theos" >> $GITHUB_ENV
+          git clone --recursive https://github.com/theos/theos.git $HOME/theos
+          # Tải SDK iOS (cần SDK 16.0+ cho COSMIC Kit)
+          curl -LO https://github.com/theos/sdks/releases/download/v14.5/iPhoneOS16.5.sdk.tar.xz
+          tar -xf iPhoneOS16.5.sdk.tar.xz -C $HOME/theos/sdks
+          rm iPhoneOS16.5.sdk.tar.xz
+
+      - name: Build Rootless Package
+        run: |
+          export THEOS=$HOME/theos
+          env CLANG_MODULE_CACHE_PATH=/tmp/clang-module-cache SWIFT_MODULE_CACHE_PATH=/tmp/swift-module-cache make clean package FINALPACKAGE=1
+
+      - name: Upload DEB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: COSMICKit-DEB
+          path: packages/*.deb
