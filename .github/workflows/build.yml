@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  workflow_dispatch: # Cho phép nhấn nút bấm Build thủ công bất cứ lúc nào
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,8 +21,10 @@ jobs:
         run: |
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
           git clone --recursive https://github.com/theos/theos.git $HOME/theos
-          # Tải SDK iOS (cần SDK 16.0+ cho COSMIC Kit)
-          curl -LO https://github.com/theos/sdks/releases/download/v14.5/iPhoneOS16.5.sdk.tar.xz
+          
+          # Tải SDK iOS 16.5 từ repo chuẩn của Theos SDKs
+          curl -LO https://github.com/theos/sdks/releases/download/v16.5/iPhoneOS16.5.sdk.tar.xz
+          mkdir -p $HOME/theos/sdks
           tar -xf iPhoneOS16.5.sdk.tar.xz -C $HOME/theos/sdks
           rm iPhoneOS16.5.sdk.tar.xz
 
